@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "443530896238",
+    "project_id": "ningalchatanees",
+    "storage_bucket": "ningalchatanees.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443530896238:android:eb4d4598127e4e4a12977f",
+        "android_client_info": {
+          "package_name": "com.ningal_chat.anees"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk6LRXOExV3Mjo6NA00yB8q8SwnohpLRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
