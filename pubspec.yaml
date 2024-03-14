@@ -28,7 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  cloud_firestore: 
+  cloud_firestore: null
   cupertino_icons: null
   firebase_auth: null
   firebase_core: null
@@ -36,6 +36,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: null
+  meta: 
 
 dev_dependencies:
   flutter_lints: ^2.0.0
