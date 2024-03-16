@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,11 +37,9 @@ class HomePage extends StatelessWidget {
 
               return ListView.separated(
                   itemBuilder: (context, index) {
-                    //
-
-                    if (anDatas[index]["Email"] !=
+                      if (anDatas[index]["Email"] !=
                         FirebaseAuth.instance.currentUser!.email) {
-                      log(FirebaseAuth.instance.currentUser!.email.toString());
+                     
                       return ListTile(
                         onTap: () {
                           Navigator.push(
