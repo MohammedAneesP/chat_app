@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,11 +18,13 @@ class HomePage extends StatelessWidget {
                 onPressed: () async {
                   await AuthFunctions(FirebaseAuth.instance)
                       .logout(context: context);
-                  Navigator.pushReplacement(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => LoginPage(),
-                      ));
+                  if (context.mounted) {
+                    Navigator.pushReplacement(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => LoginPage(),
+                        ));
+                  }
                 },
                 icon: const Icon(Icons.logout_outlined)),
           ],
@@ -37,9 +37,8 @@ class HomePage extends StatelessWidget {
 
               return ListView.separated(
                   itemBuilder: (context, index) {
-                      if (anDatas[index]["Email"] !=
+                    if (anDatas[index]["Email"] !=
                         FirebaseAuth.instance.currentUser!.email) {
-                     
                       return ListTile(
                         onTap: () {
                           Navigator.push(

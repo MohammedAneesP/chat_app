@@ -32,14 +32,16 @@ dependencies:
   cupertino_icons: null
   firebase_auth: null
   firebase_core: null
+  firebase_messaging: null
   firebase_storage: null
   flutter:
     sdk: flutter
   flutter_bloc: null
-  meta: 
+  http:
+  meta: null
 
 dev_dependencies:
-  flutter_lints: ^2.0.0
+  flutter_lints: null
   flutter_test:
     sdk: flutter
 

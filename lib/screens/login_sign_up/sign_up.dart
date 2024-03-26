@@ -5,9 +5,9 @@ import 'package:ningal_chat/services/authentication/auth_gate.dart';
 
 class SignUpPage extends StatelessWidget {
   SignUpPage({super.key});
-  TextEditingController anEmailController = TextEditingController();
-  TextEditingController anPasswordController = TextEditingController();
-  TextEditingController confirmPassController = TextEditingController();
+  final TextEditingController anEmailController = TextEditingController();
+  final TextEditingController anPasswordController = TextEditingController();
+  final TextEditingController confirmPassController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

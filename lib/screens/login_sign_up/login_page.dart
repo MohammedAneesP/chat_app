@@ -6,8 +6,8 @@ import 'package:ningal_chat/services/authentication/auth_gate.dart';
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
-  TextEditingController anEmailController = TextEditingController();
-  TextEditingController anPasswordController = TextEditingController();
+ final TextEditingController anEmailController = TextEditingController();
+ final TextEditingController anPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
