@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:ningal_chat/services/api/to_notification.dart';
 
@@ -27,33 +26,40 @@ class ChatPage extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection("chats")
             .doc(theDocId)
-            .collection("messages")
-            .orderBy("timeStamp", descending: false)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final theData = snapshot.data!;
-
-            if (theData.docs.isEmpty) {
+            final theDatas = snapshot.data;
+            if (theDatas!.exists) {
+              final theChats = theDatas.data();
+              if (theChats!.isEmpty) {
+                return TheNoMessage(
+                    anController: anController,
+                    theDocId: theDocId,
+                    theCurrentUser: theCurrentUser,
+                    anEmail: anEmail);
+              } else {
+                List<dynamic> theChatList = theChats["messages"];
+                return TheChattings(
+                    theResults: theChatList,
+                    anEmail: anEmail,
+                    theCurrentUser: theCurrentUser,
+                    anController: anController,
+                    theDocId: theDocId);
+              }
+            } else {
               return TheNoMessage(
-                  anEmail: anEmail,
                   anController: anController,
                   theDocId: theDocId,
-                  theCurrentUser: theCurrentUser);
-            } else {
-              final theResults = theData.docs;
-
-              return TheChattings(
-                  theResults: theResults,
-                  anEmail: anEmail,
                   theCurrentUser: theCurrentUser,
-                  anController: anController,
-                  theDocId: theDocId);
+                  anEmail: anEmail);
             }
           } else {
-            return const Center(
-              child: Text("Start chat now"),
-            );
+            return TheNoMessage(
+                anController: anController,
+                theDocId: theDocId,
+                theCurrentUser: theCurrentUser,
+                anEmail: anEmail);
           }
         },
       ),
@@ -61,7 +67,7 @@ class ChatPage extends StatelessWidget {
   }
 }
 
-class TheNoMessage extends StatelessWidget {
+class TheNoMessage extends StatefulWidget {
   const TheNoMessage({
     super.key,
     required this.anController,
@@ -75,6 +81,11 @@ class TheNoMessage extends StatelessWidget {
   final String theCurrentUser;
   final String anEmail;
 
+  @override
+  State<TheNoMessage> createState() => _TheNoMessageState();
+}
+
+class _TheNoMessageState extends State<TheNoMessage> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -94,7 +105,7 @@ class TheNoMessage extends StatelessWidget {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextField(
-                    controller: anController,
+                    controller: widget.anController,
                     decoration: const InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -116,15 +127,15 @@ class TheNoMessage extends StatelessWidget {
                   onPressed: () async {
                     final anData = await FirebaseFirestore.instance
                         .collection("Users")
-                        .doc(anEmail)
+                        .doc(widget.anEmail)
                         .get();
                     String? token = anData["FcmToken"].toString();
 
                     if (token.isNotEmpty) {
+                      await addToFirebase(widget.theDocId,
+                          widget.anController.text, widget.theCurrentUser);
                       sendNotification(token, "title", "body");
-                      await addToFirebase(
-                          theDocId, anController.text, theCurrentUser);
-                      anController.clear();
+                      widget.anController.clear();
                     }
                   },
                   icon: const Icon(Icons.send),
@@ -138,7 +149,7 @@ class TheNoMessage extends StatelessWidget {
   }
 }
 
-class TheChattings extends StatelessWidget {
+class TheChattings extends StatefulWidget {
   const TheChattings({
     super.key,
     required this.theResults,
@@ -148,12 +159,17 @@ class TheChattings extends StatelessWidget {
     required this.theDocId,
   });
 
-  final List<QueryDocumentSnapshot<Map<String, dynamic>>> theResults;
+  final List<dynamic> theResults;
   final String anEmail;
   final String theCurrentUser;
   final TextEditingController anController;
   final String theDocId;
 
+  @override
+  State<TheChattings> createState() => _TheChattingsState();
+}
+
+class _TheChattingsState extends State<TheChattings> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -165,10 +181,11 @@ class TheChattings extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListView.separated(
-                  separatorBuilder: (context, index) => const Divider(),
+                  separatorBuilder: (context, index) =>
+                      const Divider(color: Colors.transparent),
                   itemBuilder: (context, index) {
-                    final fetchedMessage = theResults.elementAt(index).data();
-                    if (fetchedMessage.containsKey(anEmail)) {
+                    final fetchedMessage = widget.theResults.elementAt(index);
+                    if (fetchedMessage.containsKey(widget.anEmail)) {
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 100, 0),
                         child: Container(
@@ -180,7 +197,7 @@ class TheChattings extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Text(
-                              fetchedMessage[anEmail],
+                              fetchedMessage[widget.anEmail],
                               textAlign: TextAlign.left,
                               style: const TextStyle(fontSize: 18),
                             ),
@@ -198,7 +215,7 @@ class TheChattings extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Text(
-                              fetchedMessage[theCurrentUser],
+                              fetchedMessage[widget.theCurrentUser],
                               textAlign: TextAlign.right,
                               style: const TextStyle(fontSize: 18),
                             ),
@@ -207,7 +224,7 @@ class TheChattings extends StatelessWidget {
                       );
                     }
                   },
-                  itemCount: theResults.length,
+                  itemCount: widget.theResults.length,
                 ),
               )),
           Center(
@@ -217,7 +234,7 @@ class TheChattings extends StatelessWidget {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.8,
                   child: TextField(
-                    controller: anController,
+                    controller: widget.anController,
                     decoration: const InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -237,18 +254,18 @@ class TheChattings extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () async {
-                   
                     final anData = await FirebaseFirestore.instance
                         .collection("Users")
-                        .doc(anEmail)
+                        .doc(widget.anEmail)
                         .get();
                     String? token = anData["FcmToken"].toString();
                     log(token.toString());
-                    if (token.isNotEmpty) {
+                    if (token.isNotEmpty &&
+                        widget.anController.text.isNotEmpty) {
+                      await addToFirebase(widget.theDocId,
+                          widget.anController.text, widget.theCurrentUser);
                       await sendNotification(token, "title", "nobody");
-                      await addToFirebase(
-                          theDocId, anController.text, theCurrentUser);
-                      anController.clear();
+                      widget.anController.clear();
                     }
                   },
                   icon: const Icon(Icons.send),
@@ -266,29 +283,41 @@ Future<void> addToFirebase(
     String theEmails, String theMessage, String currentEmail) async {
   final anValue = await FirebaseFirestore.instance.collection("chats").get();
   if (anValue.docs.isEmpty) {
-    await FirebaseFirestore.instance
-        .collection("chats")
-        .doc(theEmails)
-        .collection("messages")
-        .add({"timeStamp": DateTime.now(), currentEmail: theMessage});
+    await FirebaseFirestore.instance.collection("chats").doc(theEmails).set({
+      "messages": [
+        {"timeStamp": DateTime.now(), currentEmail: theMessage}
+      ]
+    });
   } else {
     final theChatting = await FirebaseFirestore.instance
         .collection("chats")
         .doc(theEmails)
-        .collection("messages")
         .get();
-    if (theChatting.docs.isEmpty) {
-      await FirebaseFirestore.instance
-          .collection("chats")
-          .doc(theEmails)
-          .collection("messages")
-          .add({"timeStamp": DateTime.now(), currentEmail: theMessage});
+    if (theChatting.exists) {
+      final anVallue = theChatting.data();
+      if (anVallue!.isEmpty) {
+        await FirebaseFirestore.instance
+            .collection("chats")
+            .doc(theEmails)
+            .set({
+          "messages": [
+            {"timeStamp": DateTime.now(), currentEmail: theMessage}
+          ]
+        });
+      } else {
+        List<dynamic> chats = anVallue["messages"];
+        chats.add({"timeStamp": DateTime.now(), currentEmail: theMessage});
+        await FirebaseFirestore.instance
+            .collection("chats")
+            .doc(theEmails)
+            .set({"messages": chats});
+      }
     } else {
-      await FirebaseFirestore.instance
-          .collection("chats")
-          .doc(theEmails)
-          .collection("messages")
-          .add({"timeStamp": DateTime.now(), currentEmail: theMessage});
+      await FirebaseFirestore.instance.collection("chats").doc(theEmails).set({
+        "messages": [
+          {"timeStamp": DateTime.now(), currentEmail: theMessage}
+        ]
+      });
     }
   }
 }
