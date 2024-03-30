@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -21,8 +22,18 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await PushNotification.getFcmPermission();
+  await PushNotification.getNotifyPermission();
+  await PushNotification.localNotifyInit();
   FirebaseMessaging.onBackgroundMessage(firebaseBackgroundMessage);
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    String payloadData = jsonEncode(message.data);
+    if (message.notification != null) {
+      PushNotification.showSimpleNotification(
+          title: message.notification!.title!,
+          body: message.notification!.body!,
+          payload: payloadData);
+    }
+  });
   runApp(const MyApp());
 }
 

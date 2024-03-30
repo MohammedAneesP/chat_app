@@ -134,7 +134,8 @@ class _TheNoMessageState extends State<TheNoMessage> {
                     if (token.isNotEmpty) {
                       await addToFirebase(widget.theDocId,
                           widget.anController.text, widget.theCurrentUser);
-                      sendNotification(token, "title", "body");
+                      sendNotification(token, widget.anController.text,
+                          widget.theCurrentUser);
                       widget.anController.clear();
                     }
                   },
@@ -264,7 +265,8 @@ class _TheChattingsState extends State<TheChattings> {
                         widget.anController.text.isNotEmpty) {
                       await addToFirebase(widget.theDocId,
                           widget.anController.text, widget.theCurrentUser);
-                      await sendNotification(token, "title", "nobody");
+                      await sendNotification(token, widget.anController.text,
+                          widget.theCurrentUser);
                       widget.anController.clear();
                     }
                   },

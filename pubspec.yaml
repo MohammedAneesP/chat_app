@@ -37,7 +37,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: null
-  http:
+  flutter_local_notifications: 
+  http: null
   meta: null
 
 dev_dependencies:
