@@ -31,8 +31,8 @@ class PushNotification {
         AndroidInitializationSettings('@mipmap/ic_launcher');
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-            onDidReceiveLocalNotification: (id, title, body, payload) => null);
-    final LinuxInitializationSettings initializationSettingsLinux =
+            onDidReceiveLocalNotification: (id, title, body, payload) {});
+    const LinuxInitializationSettings initializationSettingsLinux =
         LinuxInitializationSettings(defaultActionName: 'Open notification');
     final InitializationSettings initializationSettings =
         InitializationSettings(
