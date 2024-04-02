@@ -37,8 +37,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: null
-  flutter_local_notifications: 
+  flutter_local_notifications: null
   http: null
+  image_picker: 
   meta: null
 
 dev_dependencies:

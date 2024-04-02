@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ningal_chat/screens/login_sign_up/sign_up.dart';
+import 'package:ningal_chat/screens/login_sign_up/widgets/login_textfield.dart';
 import 'package:ningal_chat/services/authentication/auth_gate.dart';
 
 class LoginPage extends StatelessWidget {
@@ -93,36 +94,6 @@ class LoginPage extends StatelessWidget {
                   ],
                 ),
               ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class LogTextfield extends StatelessWidget {
-  const LogTextfield({
-    super.key,
-    required this.anEmailController,
-    required this.anLabelText,
-    required this.anPrefixIcon,
-  });
-
-  final TextEditingController anEmailController;
-  final String anLabelText;
-  final Icon anPrefixIcon;
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: anEmailController,
-      decoration: InputDecoration(
-        labelText: anLabelText,
-        prefixIcon: anPrefixIcon,
-        border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(
-              25,
             ),
           ),
         ),

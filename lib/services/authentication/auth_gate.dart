@@ -23,15 +23,18 @@ class AuthFunctions {
       if (context.mounted) {
         if (anFireBaseAuth.currentUser!.emailVerified) {
           final anFcmToken = await FirebaseMessaging.instance.getToken();
-          if (anFcmToken!=null) {
+          if (anFcmToken != null) {
             log(anFcmToken);
           }
           if (anFcmToken != null) {
-           await FirebaseFirestore.instance.collection("Users").doc(email).set({
-          "Email": anFireBaseAuth.currentUser!.email,
-          "id": anFireBaseAuth.currentUser!.uid,
-          "FcmToken": anFcmToken,
-        });
+            await FirebaseFirestore.instance
+                .collection("Users")
+                .doc(email)
+                .set({
+              "Email": anFireBaseAuth.currentUser!.email,
+              "id": anFireBaseAuth.currentUser!.uid,
+              "FcmToken": anFcmToken,
+            });
           }
 
           if (context.mounted) {
@@ -61,13 +64,12 @@ class AuthFunctions {
           email: anEmail, password: anPassword);
       // final anFcmToken = await FirebaseMessaging.instance.getToken();
       await anFireBaseAuth.currentUser!.sendEmailVerification();
-     
-        await FirebaseFirestore.instance.collection("Users").doc(anEmail).set({
-          "Email": anFireBaseAuth.currentUser!.email,
-          "id": anFireBaseAuth.currentUser!.uid,
-          // "FcmToken": anFcmToken,
-        });
-     
+
+      await FirebaseFirestore.instance.collection("Users").doc(anEmail).set({
+        "Email": anFireBaseAuth.currentUser!.email,
+        "id": anFireBaseAuth.currentUser!.uid,
+        // "FcmToken": anFcmToken,
+      });
 
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Verify email")));

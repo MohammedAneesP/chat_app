@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
@@ -14,6 +16,9 @@ class UsersListBloc extends Bloc<UsersListEvent, UsersListState> {
         return emit(UsersAllList(allUsersList: const []));
       } else {
         final anValue = anData.docs;
+        for (var element in anValue) {
+          log(element["Email"]);
+        }
         return emit(UsersAllList(allUsersList: anValue));
       }
     });

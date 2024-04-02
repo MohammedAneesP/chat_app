@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ningal_chat/screens/login_sign_up/login_page.dart';
+import 'package:ningal_chat/screens/login_sign_up/widgets/login_textfield.dart';
 import 'package:ningal_chat/services/authentication/auth_gate.dart';
 
 class SignUpPage extends StatelessWidget {

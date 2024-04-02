@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ningal_chat/repository/add_to_firebase.dart';
+import 'package:ningal_chat/screens/chat_screen.dart/widgets/the_textfield.dart';
 import 'package:ningal_chat/services/api/to_notification.dart';
 
 class TheNoMessage extends StatelessWidget {
@@ -33,27 +34,7 @@ class TheNoMessage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextField(
-                    controller: anController,
-                    decoration: const InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(30),
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(
-                            30,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                TheTextField(anController: anController),
                 IconButton(
                   onPressed: () async {
                     final anData = await FirebaseFirestore.instance
