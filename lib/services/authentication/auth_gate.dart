@@ -5,7 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:ningal_chat/screens/home/home_page.dart';
-import 'package:ningal_chat/screens/login_sign_up/login_page.dart';
+import 'package:ningal_chat/screens/login_sign_up/verify_page.dart';
+import 'package:ningal_chat/screens/profile/set_profile.dart';
 
 class AuthFunctions {
   final FirebaseAuth anFireBaseAuth;
@@ -62,23 +63,25 @@ class AuthFunctions {
     try {
       await anFireBaseAuth.createUserWithEmailAndPassword(
           email: anEmail, password: anPassword);
-      // final anFcmToken = await FirebaseMessaging.instance.getToken();
+     
       await anFireBaseAuth.currentUser!.sendEmailVerification();
-
+       final anFcmToken = await FirebaseMessaging.instance.getToken();
       await FirebaseFirestore.instance.collection("Users").doc(anEmail).set({
         "Email": anFireBaseAuth.currentUser!.email,
         "id": anFireBaseAuth.currentUser!.uid,
-        // "FcmToken": anFcmToken,
+        "FcmToken": anFcmToken,
       });
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Verify email")));
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Verify email")));
-
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoginPage(),
-          ));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  VerifyPage(anEmail: anEmail, anPassword: anPassword),
+            ));
+      }
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("${e.message}")));
@@ -91,6 +94,31 @@ class AuthFunctions {
     } on FirebaseException catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.message.toString())));
+    }
+  }
+
+  Future<void> isVerified(
+      {required BuildContext context,
+      required String anEmail,
+      required String anPassword}) async {
+    await anFireBaseAuth.signInWithEmailAndPassword(
+      email: anEmail,
+      password: anPassword,
+    );
+    if (context.mounted) {
+      if (anFireBaseAuth.currentUser!.emailVerified) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SettingProfile(),
+            ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please Verify Your Account"),
+          ),
+        );
+      }
     }
   }
 }

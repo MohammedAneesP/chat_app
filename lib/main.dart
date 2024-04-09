@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ningal_chat/bloc/profile_image/profile_image_bloc.dart';
 import 'package:ningal_chat/bloc/users_list/users_list_bloc.dart';
 import 'package:ningal_chat/push_notification.dart';
 import 'package:ningal_chat/screens/splash_screen.dart';
@@ -43,7 +44,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => UsersListBloc())],
+      providers: [
+        BlocProvider(create: (context) => ProfileImageBloc()),
+        BlocProvider(create: (context) => UsersListBloc()),
+      ],
       child: MaterialApp(
         theme: ThemeData(),
         home: const SplashScreen(),
