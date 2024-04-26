@@ -3,7 +3,12 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
-Future sendNotification(String token, String title, String body) async {
+Future sendNotification({
+  required String token,
+  required String message,
+  required String senderEmail,
+  required String senderName,
+}) async {
   final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
   const serverKey =
       'AAAAZ0SAY24:APA91bF2i6NOIbqUGmeIqJHEQCEHtMQN_fcL7P19KQGbZke3ZLgJWSK3DAYyJrTsiyzizKf8rOuyj8MIj9JdM0SWZC7gTA0yt25jXKwO2V_bV1PLhHY2NDQKmQ-sy_B9EgCU5YpcqUCz';
@@ -15,13 +20,14 @@ Future sendNotification(String token, String title, String body) async {
 
   final payload = {
     'notification': {
-      'title': title,
-      'body': body,
+      'title': message,
+      'body': senderEmail,
     },
     'priority': 'high', // Set priority for better delivery
     'data': {
       // Optional data payload for your app
       'click_action': 'FLUTTER_NOTIFICATION_CLICK', // Custom action on tap
+      "email": senderEmail
     },
     'to': token,
   };

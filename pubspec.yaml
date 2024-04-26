@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cached_network_image:
   cloud_firestore: null
   cupertino_icons: null
   firebase_auth: null
@@ -39,7 +40,7 @@ dependencies:
   flutter_bloc: null
   flutter_local_notifications: null
   http: null
-  image_picker: 
+  image_picker: null
   meta: null
 
 dev_dependencies:

@@ -9,13 +9,15 @@ class TheNoMessage extends StatelessWidget {
     super.key,
     required this.anController,
     required this.theDocId,
-    required this.theCurrentUser,
+    required this.currentUserEmail,
+    required this.currentUserName,
     required this.anEmail,
   });
 
   final TextEditingController anController;
   final String theDocId;
-  final String theCurrentUser;
+  final String currentUserEmail;
+  final String currentUserName;
   final String anEmail;
 
   @override
@@ -45,9 +47,12 @@ class TheNoMessage extends StatelessWidget {
 
                     if (token.isNotEmpty) {
                       await AddToFirebase().addToFirebase(
-                          theDocId, anController.text, theCurrentUser);
-                      sendNotification(
-                          token, anController.text, theCurrentUser);
+                          theDocId, anController.text, currentUserEmail);
+                      await sendNotification(
+                          token: token,
+                          message: anController.text,
+                          senderEmail: currentUserEmail,
+                          senderName: currentUserName);
                       anController.clear();
                     }
                   },

@@ -27,15 +27,21 @@ class AuthFunctions {
           if (anFcmToken != null) {
             log(anFcmToken);
           }
-          if (anFcmToken != null) {
-            await FirebaseFirestore.instance
-                .collection("Users")
-                .doc(email)
-                .set({
-              "Email": anFireBaseAuth.currentUser!.email,
-              "id": anFireBaseAuth.currentUser!.uid,
-              "FcmToken": anFcmToken,
-            });
+          final anUser = await FirebaseFirestore.instance
+              .collection("Users")
+              .doc(email)
+              .get();
+          if (anUser.exists) {
+            final values = anUser.data();
+            if (values!.isNotEmpty) {
+              if (anFcmToken != null) {
+                values["FcmToken"] = anFcmToken;
+                await FirebaseFirestore.instance
+                    .collection("Users")
+                    .doc(email)
+                    .set(values);
+              }
+            }
           }
 
           if (context.mounted) {
@@ -63,17 +69,11 @@ class AuthFunctions {
     try {
       await anFireBaseAuth.createUserWithEmailAndPassword(
           email: anEmail, password: anPassword);
-     
+
       await anFireBaseAuth.currentUser!.sendEmailVerification();
-       final anFcmToken = await FirebaseMessaging.instance.getToken();
-      await FirebaseFirestore.instance.collection("Users").doc(anEmail).set({
-        "Email": anFireBaseAuth.currentUser!.email,
-        "id": anFireBaseAuth.currentUser!.uid,
-        "FcmToken": anFcmToken,
-      });
       if (context.mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Verify email")));
+            .showSnackBar(const SnackBar(content: Text("email verification sent")));
 
         Navigator.pushReplacement(
             context,

@@ -16,9 +16,9 @@ class UsersListBloc extends Bloc<UsersListEvent, UsersListState> {
         return emit(UsersAllList(allUsersList: const []));
       } else {
         final anValue = anData.docs;
-        for (var element in anValue) {
-          log(element["Email"]);
-        }
+        // for (var element in anValue) {
+        //   log(element["Email"]);
+        // }
         return emit(UsersAllList(allUsersList: anValue));
       }
     });

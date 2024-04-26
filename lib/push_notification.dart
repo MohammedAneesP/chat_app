@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:ningal_chat/main.dart';
+import 'package:ningal_chat/screens/chat_screen.dart/chat_page.dart';
 
 class PushNotification {
   static final flutterLocalNotificationsPlugin =
@@ -19,9 +22,9 @@ class PushNotification {
     );
 
 // For apple platforms, ensure the APNS token is available before making any FCM plugin API calls
-    final apnsToken = await FirebaseMessaging.instance.getToken();
-    if (apnsToken != null) {
-      log(apnsToken.toString());
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken != null) {
+      log(fcmToken.toString());
     }
   }
 
@@ -40,9 +43,21 @@ class PushNotification {
             iOS: initializationSettingsDarwin,
             linux: initializationSettingsLinux);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (response) {
-      debugPrint(response.payload.toString());
-    });
+        onDidReceiveNotificationResponse: onNotificationTap);
+  }
+
+  static void onNotificationTap(NotificationResponse anNotificationResponse) {
+    final anDatas = jsonDecode(anNotificationResponse.payload!);
+    log(anDatas["email"].toString());
+    final anEmail = anDatas["email"].toString();
+
+    navigatorKey.currentState!.push(
+      CupertinoPageRoute(
+        builder: (context) => ChatPage(
+          anEmail: anEmail,
+        ),
+      ),
+    );
   }
 
   static Future showSimpleNotification({

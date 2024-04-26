@@ -12,6 +12,7 @@ class TheChattings extends StatefulWidget {
     required this.theResults,
     required this.anEmail,
     required this.theCurrentUser,
+    required this.currentUserName,
     required this.anController,
     required this.theDocId,
   });
@@ -19,6 +20,7 @@ class TheChattings extends StatefulWidget {
   final List<dynamic> theResults;
   final String anEmail;
   final String theCurrentUser;
+  final String currentUserName;
   final TextEditingController anController;
   final String theDocId;
 
@@ -111,13 +113,15 @@ class _TheChattingsState extends State<TheChattings> {
                         .doc(widget.anEmail)
                         .get();
                     String? token = anData["FcmToken"].toString();
-                    log(token.toString());
                     if (token.isNotEmpty &&
                         widget.anController.text.isNotEmpty) {
                       await AddToFirebase().addToFirebase(widget.theDocId,
                           widget.anController.text, widget.theCurrentUser);
-                      await sendNotification(token, widget.anController.text,
-                          widget.theCurrentUser);
+                      await sendNotification(
+                          token: token,
+                          message: widget.anController.text,
+                          senderEmail: widget.theCurrentUser,
+                          senderName: widget.currentUserName);
                       widget.anController.clear();
                       scrollTobottom();
                     }

@@ -3,11 +3,13 @@ import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ningal_chat/bloc/profile_image/profile_image_bloc.dart';
 import 'package:ningal_chat/bloc/users_list/users_list_bloc.dart';
 import 'package:ningal_chat/push_notification.dart';
+import 'package:ningal_chat/screens/chat_screen.dart/chat_page.dart';
 import 'package:ningal_chat/screens/splash_screen.dart';
 
 import 'firebase_options.dart';
@@ -17,6 +19,8 @@ Future firebaseBackgroundMessage(RemoteMessage anMessage) async {
     log("notification recieved latest 1");
   }
 }
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +39,17 @@ Future<void> main() async {
           payload: payloadData);
     }
   });
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage anMessage) {
+    if (anMessage.notification != null) {
+      log(anMessage.data.toString());
+      navigatorKey.currentState!.push(
+        CupertinoPageRoute(
+          builder: (context) =>
+              ChatPage(anEmail: anMessage.data["email"].toString()),
+        ),
+      );
+    }
+  });
   runApp(const MyApp());
 }
 
@@ -49,7 +64,18 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => UsersListBloc()),
       ],
       child: MaterialApp(
-        theme: ThemeData(),
+        navigatorKey: navigatorKey,
+        theme: ThemeData(
+            appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        )),
         home: const SplashScreen(),
         debugShowCheckedModeBanner: false,
       ),
